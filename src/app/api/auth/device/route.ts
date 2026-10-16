@@ -11,7 +11,8 @@ import { RequestBodyTooLargeError } from "@/lib/http/errors";
 import { recordAuthActivity } from "@/lib/auth/activity";
 import { consumeLoginChallenge, createLoginChallenge, getLoginChallengeUserId } from "@/lib/auth/login-challenge";
 import { verifySecondFactor } from "@/lib/auth/mfa";
-import { createDeviceKey } from "@/lib/auth/device-keys";
+import { createDeviceKey, revokeDeviceKey } from "@/lib/auth/device-keys";
+import { authenticateApiRequest } from "@/lib/api/key-auth";
 
 function json(body: unknown, status = 200, headers: Record<string, string> = {}) {
 	return NextResponse.json(body, { status, headers: { "Cache-Control": "no-store", ...headers } });
@@ -62,4 +63,13 @@ export async function POST(request: Request) {
 	await recordAuthActivity(env, { action: "auth.device_login", userId, request });
 	const origin = env.APP_URL?.trim().replace(/\/+$/, "") || new URL(request.url).origin;
 	return json({ ok: true, key: device.key, keyId: device.id, email: user?.email, sessionUrl: `${origin}/jmap/session` });
+}
+
+/** Signing out in the app: the device key revokes itself (and its push registration). */
+export async function DELETE(request: Request) {
+	const env = getEnv();
+	const auth = await authenticateApiRequest(env, request);
+	if (!auth || auth.keyKind !== "device") return json({ error: "Unauthorized" }, 401);
+	await revokeDeviceKey(env, auth.userId, auth.keyId);
+	return json({ ok: true });
 }
