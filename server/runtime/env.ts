@@ -56,6 +56,7 @@ export function createNodeRuntime(): NodeRuntime {
 		IMAGES: undefined as unknown as CloudflareEnv["IMAGES"],
 		WORKER_SELF_REFERENCE: undefined as unknown as CloudflareEnv["WORKER_SELF_REFERENCE"],
 		LOGIN_RATE_LIMIT: openRateLimiter(20, 60),
+		DEVICE_LOGIN_RATE_LIMIT: openRateLimiter(10, 60),
 		AGENT_RATE_LIMIT: openRateLimiter(120, 60),
 		B2_KEY_ID: optional("B2_KEY_ID"),
 		B2_APPLICATION_KEY: optional("B2_APPLICATION_KEY"),

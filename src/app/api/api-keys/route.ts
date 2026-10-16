@@ -37,7 +37,7 @@ export async function GET(request: Request) {
 		.where(eq(apiKeys.userId, user.id));
 	const keyIds = rows.map((row) => row.id);
 	const allowed = keyIds.length ? await db.select().from(mcpKeyMailboxes).where(inArray(mcpKeyMailboxes.keyId, keyIds)) : [];
-	return NextResponse.json({ apiKeys: rows.filter((row) => !parseScopes(row.scopes).some((scope) => (ADMIN_API_KEY_SCOPES as readonly string[]).includes(scope))).map((row) => ({ ...row, mailboxIds: allowed.filter((item) => item.keyId === row.id).map((item) => item.mailboxId) })) });
+	return NextResponse.json({ apiKeys: rows.filter((row) => row.kind !== "device" && !parseScopes(row.scopes).some((scope) => (ADMIN_API_KEY_SCOPES as readonly string[]).includes(scope))).map((row) => ({ ...row, mailboxIds: allowed.filter((item) => item.keyId === row.id).map((item) => item.mailboxId) })) });
 }
 
 export async function POST(request: Request) {

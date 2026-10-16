@@ -4,6 +4,7 @@ import { domains, mailboxAccess, mailboxes } from "@/db/schema";
 import { isTeamMailboxSharingEnabled } from "@/lib/mailboxes/access-utils";
 import type { NewMessageNotification, AgentDraftNotification } from "./types";
 import { sendPushNotifications } from "@/lib/push/server";
+import { sendNativePush } from "@/lib/push/native";
 
 export function getSessionTokenFromRequest(request: Request): string | undefined {
 	const cookie = request.headers.get("Cookie");
@@ -65,6 +66,6 @@ export async function notifyUsersOfNewMessage(
 				body: JSON.stringify(payload),
 			});
 		}),
-		...(payload.type === "agent_draft" ? [] : [sendPushNotifications(env, userIds, payload)]),
+		...(payload.type === "agent_draft" ? [] : [sendPushNotifications(env, userIds, payload), sendNativePush(env, userIds, payload)]),
 	]);
 }

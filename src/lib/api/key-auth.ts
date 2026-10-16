@@ -35,7 +35,7 @@ export async function authenticateApiKeyValue(env: CloudflareEnv, key: string): 
 		const allowed = candidate.mailboxScopeEnabled
 			? await db.select({ mailboxId: mcpKeyMailboxes.mailboxId }).from(mcpKeyMailboxes).where(eq(mcpKeyMailboxes.keyId, candidate.id))
 			: null;
-		return { userId: user.id, email: user.email, scopes: scopes.some((scope) => ADMIN_SCOPES.has(scope)) ? scopes.filter((scope) => ADMIN_SCOPES.has(scope)) : scopes, mailboxIds: allowed?.map((row) => row.mailboxId) ?? null, user };
+		return { keyId: candidate.id, keyKind: candidate.kind, userId: user.id, email: user.email, scopes: scopes.some((scope) => ADMIN_SCOPES.has(scope)) ? scopes.filter((scope) => ADMIN_SCOPES.has(scope)) : scopes, mailboxIds: allowed?.map((row) => row.mailboxId) ?? null, user };
 	}
 	return null;
 }

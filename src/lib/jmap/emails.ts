@@ -1,4 +1,5 @@
 import { and, asc, count, desc, eq, inArray, sql } from "drizzle-orm";
+import { emailChangesSince, threadChangesSince } from "./changes";
 import { messages } from "@/db/schema";
 import { newId } from "@/lib/ids";
 import { buildSnippet, parseRawMime } from "@/lib/email/parse";
@@ -147,9 +148,7 @@ export const emailQuery: JmapMethodHandler = async (ctx, args) => {
 	};
 };
 
-export const emailChanges: JmapMethodHandler = async () => {
-	return { type: "cannotCalculateChanges", description: "Email change history is not kept; run Email/query again." };
-};
+export const emailChanges: JmapMethodHandler = async (ctx, args) => emailChangesSince(ctx, args);
 
 export const emailQueryChanges: JmapMethodHandler = async () => {
 	return { type: "cannotCalculateChanges" };
@@ -464,7 +463,7 @@ export const threadGet: JmapMethodHandler = async (ctx, args) => {
 	};
 };
 
-export const threadChanges: JmapMethodHandler = async () => ({ type: "cannotCalculateChanges" });
+export const threadChanges: JmapMethodHandler = async (ctx, args) => threadChangesSince(ctx, args);
 
 /** SearchSnippet/get: the subject and a body excerpt around the first match, with <mark> tags. */
 export const searchSnippetGet: JmapMethodHandler = async (ctx, args) => {

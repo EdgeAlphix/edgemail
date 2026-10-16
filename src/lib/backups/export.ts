@@ -30,6 +30,12 @@ const INTERNAL_TABLES = [
 	// Exporting it would make restore fail, since the triggers recreate these
 	// primary keys before the table's own rows would be inserted.
 	"jmap_mailbox_revisions",
+	// The JMAP change log is derived the same way (jmap_changes_* triggers);
+	// after a restore clients resync because their states no longer apply.
+	"jmap_changes",
+	"jmap_change_floor",
+	// Push registrations are re-sent by each app on launch.
+	"push_devices",
 ];
 
 /**

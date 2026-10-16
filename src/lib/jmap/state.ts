@@ -1,11 +1,15 @@
 import type { JmapContext } from "./types";
-import { getJmapRevision } from "./revision";
+import { currentChangeScope } from "./changes";
 
-/** Opaque revision tokens change on every message or folder write. */
+/**
+ * States are change-log positions (see changes.ts), shared by every type:
+ * any message, folder or mailbox write moves them, and `*\/changes` can
+ * continue from them.
+ */
 export async function getEmailState(ctx: JmapContext): Promise<string> {
-	return getJmapRevision(ctx);
+	return (await currentChangeScope(ctx)).state;
 }
 
 export async function getMailboxState(ctx: JmapContext, emailState?: string): Promise<string> {
-	return emailState ?? getJmapRevision(ctx);
+	return emailState ?? getEmailState(ctx);
 }

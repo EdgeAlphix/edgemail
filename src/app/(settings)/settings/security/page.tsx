@@ -1,6 +1,7 @@
 import { getServerTranslator } from "@/lib/i18n/server";
 import { ChangePasswordForm } from "@/components/settings/change-password-form";
 import { MfaSettings } from "@/components/settings/mfa-settings";
+import { DeviceSettings } from "@/components/settings/device-settings";
 
 export default async function SecuritySettingsPage() {
 	const t = await getServerTranslator();
@@ -23,6 +24,13 @@ export default async function SecuritySettingsPage() {
 					<p className="mt-1 text-sm text-neutral-500">{t("settingsPage.security.mfaDescription")}</p>
 				</div>
 				<MfaSettings />
+			</div>
+			<div className="space-y-4 rounded-3xl bg-white p-6">
+				<div>
+					<h2 className="text-lg font-semibold text-neutral-900">{t("settingsPage.security.devices")}</h2>
+					<p className="mt-1 text-sm text-neutral-500">{t("settingsPage.security.devicesDescription")}</p>
+				</div>
+				<DeviceSettings />
 			</div>
 		</section>
 	</div>;

@@ -20,6 +20,13 @@ interface CloudflareEnv {
 		import("./src/lib/realtime/hub").RealtimeHub
 	>;
 	LOGIN_RATE_LIMIT?: RateLimit;
+	/** Mobile device sign-in (`/api/auth/device`), stricter than the web login. */
+	DEVICE_LOGIN_RATE_LIMIT?: RateLimit;
+	/** APNs auth key for the mobile push relay (src/lib/push/native.ts). */
+	APNS_KEY_ID?: string;
+	APNS_TEAM_ID?: string;
+	/** The .p8 file contents (PKCS#8 PEM). */
+	APNS_PRIVATE_KEY?: string;
 	AGENT_RATE_LIMIT?: RateLimit;
 	/**
 	 * Backblaze B2 storage. When all four are set, B2 replaces the R2 binding for raw mail, attachments, Drive,

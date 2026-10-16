@@ -1,4 +1,5 @@
 import { and, count, eq, inArray, isNull, sql } from "drizzle-orm";
+import { mailboxChangesSince } from "./changes";
 import { folders, messages } from "@/db/schema";
 import { newId } from "@/lib/ids";
 import { JmapError } from "./errors";
@@ -176,9 +177,7 @@ export const mailboxQuery: JmapMethodHandler = async (ctx, args) => {
 	};
 };
 
-export const mailboxChanges: JmapMethodHandler = async () => {
-	return { type: "cannotCalculateChanges", description: "Mailbox change history is not kept; run Mailbox/get again." };
-};
+export const mailboxChanges: JmapMethodHandler = async (ctx, args) => mailboxChangesSince(ctx, args);
 
 /** Folders can be created, renamed and removed; system mailboxes cannot. */
 export const mailboxSet: JmapMethodHandler = async (ctx, args) => {
