@@ -2,7 +2,7 @@ import { NextResponse } from "next/server";
 import { getCurrentUser } from "@/lib/auth/cookies";
 import { getEnv } from "@/lib/cloudflare";
 import { hasPrimaryDomain, userHasMailboxes } from "@/lib/user";
-import { getLicenseEntitlements } from "@/lib/licenses/service";
+import { getFeatureEntitlements } from "@/lib/features/service";
 import { hasCloudflareCredentials, isNodeRuntime } from "@/lib/runtime";
 
 export async function GET(request: Request) {
@@ -14,7 +14,7 @@ export async function GET(request: Request) {
 
 	let hasMailboxes = false;
 	let isSetup = true;
-	const entitlements = await getLicenseEntitlements(env);
+	const entitlements = await getFeatureEntitlements(env);
 	try {
 		[hasMailboxes, isSetup] = await Promise.all([
 			userHasMailboxes(env, user.id),

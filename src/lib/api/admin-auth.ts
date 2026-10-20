@@ -1,7 +1,7 @@
 import { authenticateApiKey } from "@/lib/api/auth";
 import type { ApiAuthResult } from "@/lib/api/key-auth-types";
 import type { AdminApiKeyScope } from "@/lib/api/scopes-types";
-import { getLicenseEntitlements } from "@/lib/licenses/service";
+import { getFeatureEntitlements } from "@/lib/features/service";
 
 export async function authenticateAdminApiKey(env: CloudflareEnv, request: Request, scope: AdminApiKeyScope): Promise<ApiAuthResult | null> {
 	const auth = await authenticateApiKey(env, request.headers.get("authorization"));
@@ -9,9 +9,9 @@ export async function authenticateAdminApiKey(env: CloudflareEnv, request: Reque
 }
 
 export async function canShareAdminMailboxes(env: CloudflareEnv): Promise<boolean> {
-	return (await getLicenseEntitlements(env)).canShareMailboxes;
+	return (await getFeatureEntitlements(env)).canShareMailboxes;
 }
 
 export async function canManageAdminAccounts(env: CloudflareEnv): Promise<boolean> {
-	return (await getLicenseEntitlements(env)).canManageAccounts;
+	return (await getFeatureEntitlements(env)).canManageAccounts;
 }

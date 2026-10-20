@@ -41,12 +41,12 @@ export function PoweredBy({ className = "px-1" }: { className?: string }) {
       <p className={`${className} text-[11px] text-neutral-500`}>
         {t("navigation.poweredBy")}{" "}
         <a
-          href={`https://mailflare.co/?ref=${typeof window !== "undefined" ? location.hostname : ""}&v=${packageJson.version}`}
+          href="https://github.com/EdgeAlphix/edgemail"
           target="_blank"
           className="hover:underline text-neutral-500"
           rel="noreferrer"
         >
-          Mailflare v{packageJson.version}
+          EdgeMail v{packageJson.version} · Source
         </a>
       </p>
 	);

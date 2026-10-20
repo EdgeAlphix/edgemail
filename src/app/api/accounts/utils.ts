@@ -4,7 +4,7 @@ import type { getDb } from "@/db";
 import { domains, mailboxes, users } from "@/db/schema";
 import { assertAdmin } from "@/lib/auth/admin";
 import { requireUser } from "@/lib/auth/cookies";
-import { getLicenseEntitlements } from "@/lib/licenses/service";
+import { getFeatureEntitlements } from "@/lib/features/service";
 import { getEnv } from "@/lib/cloudflare";
 
 type Db = ReturnType<typeof getDb>;
@@ -87,7 +87,7 @@ export function accountListItemFromUser(user: {
 export async function requireTeamSharingAdmin(request: Request) {
 	const access = await requireTeamAdmin(request);
 	if (access.error) return access;
-	if (!(await getLicenseEntitlements(access.env)).canShareMailboxes) {
+	if (!(await getFeatureEntitlements(access.env)).canShareMailboxes) {
 		return { ...access, error: NextResponse.json({ error: "A Team license is required to share inboxes" }, { status: 403 }) };
 	}
 	return access;
@@ -98,7 +98,7 @@ export async function requireTeamAdmin(request: Request) {
 	try {
 		const user = await requireUser(env, request);
 		assertAdmin(user);
-		if (!(await getLicenseEntitlements(env)).canManageAccounts) {
+		if (!(await getFeatureEntitlements(env)).canManageAccounts) {
 			return {
 				env,
 				user,

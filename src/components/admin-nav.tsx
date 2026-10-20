@@ -7,7 +7,7 @@ import {
   Mail,
   Settings,
   Palette,
-  BadgeDollarSign,
+
   Users,
   Route,
   Webhook,
@@ -68,7 +68,7 @@ const sections: { id?: string; labelKey?: TranslationKey; links: AdminNavLink[] 
     labelKey: "admin.nav.product",
     links: [
       { href: "/branding", labelKey: "admin.nav.branding", icon: Palette, permission: "primary" },
-      { href: "/licenses", labelKey: "admin.nav.licenses", icon: BadgeDollarSign, permission: "primary" },
+
     ],
   },
 ];

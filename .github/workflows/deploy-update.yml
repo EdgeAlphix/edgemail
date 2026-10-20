@@ -1,69 +1,39 @@
-name: Dashboard Update
+name: EdgeMail upstream update
 
 on:
   workflow_dispatch:
 
 permissions:
-  contents: read
+  contents: write
+
+concurrency:
+  group: edgemail-upstream-update
+  cancel-in-progress: false
 
 jobs:
   update:
     runs-on: ubuntu-latest
     env:
-      UPDATE_SOURCE_REPOSITORY: ${{ vars.UPDATE_SOURCE_REPOSITORY || 'hieunc229/mailflare' }}
-
+      NEXT_TELEMETRY_DISABLED: "1"
+      WRANGLER_SEND_METRICS: "false"
     steps:
-      - name: Check update token
-        env:
-          UPDATE_TOKEN: ${{ secrets.MAILFLARE_UPDATE_TOKEN }}
-        run: |
-          if [ -z "${UPDATE_TOKEN}" ]; then
-            echo "::error::Add MAILFLARE_UPDATE_TOKEN as a repository Actions secret."
-            exit 1
-          fi
-
-      - name: Checkout repository
-        uses: actions/checkout@v4
+      - uses: actions/checkout@v4
         with:
           fetch-depth: 0
-          token: ${{ secrets.MAILFLARE_UPDATE_TOKEN }}
-
-      - name: Replace repository with upstream source
+      - uses: actions/setup-node@v4
+        with:
+          node-version: "22"
+          cache: npm
+      - name: Merge upstream while preserving EdgeMail changes
         run: |
           set -euo pipefail
-          git config user.name "mailflare-update"
-          git config user.email "mailflare-update@users.noreply.github.com"
-
-          upstream_url="https://github.com/${UPDATE_SOURCE_REPOSITORY}.git"
-          if git remote get-url upstream >/dev/null 2>&1; then
-            git remote set-url upstream "${upstream_url}"
-          else
-            git remote add upstream "${upstream_url}"
-          fi
-          git fetch --no-tags upstream
-
-          upstream_branch="$(git remote show upstream | sed -n 's/.*HEAD branch: //p')"
-          if [ -z "${upstream_branch}" ]; then
-            echo "::error::Could not resolve the default branch of ${UPDATE_SOURCE_REPOSITORY}."
-            exit 1
-          fi
-          upstream_ref="upstream/${upstream_branch}"
-          echo "Replacing ${GITHUB_REF_NAME} with ${upstream_ref}."
-
-          # Keep the installation repository's commit history while replacing
-          # its complete tracked tree with the current upstream tree.
-          git read-tree --reset -u "${upstream_ref}"
-          if git diff --cached --quiet; then
-            echo "Repository is already up to date."
-            exit 0
-          fi
-          git commit -m "Update Mailflare from ${UPDATE_SOURCE_REPOSITORY}@${upstream_branch}"
-
-      - name: Push update
-        run: |
-          set -euo pipefail
-          if [ -z "$(git log "origin/${GITHUB_REF_NAME}..HEAD" --oneline)" ]; then
-            echo "Repository is already up to date."
-            exit 0
-          fi
-          git push origin "HEAD:${GITHUB_REF_NAME}"
+          git config user.name "edgemail-update"
+          git config user.email "edgemail-update@users.noreply.github.com"
+          git remote add upstream https://github.com/hieunc229/mailflare.git
+          git fetch --no-tags upstream main
+          git merge --no-edit upstream/main
+      - run: npm ci --no-audit --no-fund
+      - run: node --test --test-concurrency=2 tests/*.test.mjs
+      - run: npm run build
+      - name: Publish verified update
+        run: git push origin "HEAD:${GITHUB_REF_NAME}"

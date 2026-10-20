@@ -1,10 +1,14 @@
+# EdgeMail
+
+EdgeAlphix fork of Mailflare with custom branding and all existing Team features enabled by default. No activation service or seat limits. See [EdgeMail changes and updates](edgemail/README.md).
+
 <img src="/public/icon-96.png" alt="Mailflare" width="72" />
 
 # Mailflare
 
 Mailflare is a self-hosted email inbox for custom domains, built on Cloudflare. Supports **Resend**, or **AWS SES**
 
-[![Deploy to Cloudflare](https://deploy.workers.cloudflare.com/button)](https://deploy.workers.cloudflare.com/?url=https://github.com/hieunc229/mailflare)
+[![Deploy to Cloudflare](https://deploy.workers.cloudflare.com/button)](https://deploy.workers.cloudflare.com/?url=https://github.com/EdgeAlphix/edgemail)
 
 ## Screenshots
 

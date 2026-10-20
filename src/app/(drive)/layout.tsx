@@ -4,7 +4,6 @@ import { SkipToContent } from "@/components/skip-to-content";
 import { Suspense } from "react";
 import { AuthGuard } from "@/components/auth/auth-guard";
 import { ComposeProvider } from "@/components/compose/compose-context";
-import { LicenseIndicator } from "@/components/license-indicator";
 import { MailSearchProvider } from "@/components/mail-search/mail-search-context";
 import { MailboxProvider } from "@/components/mailbox-provider";
 import { MailboxSelector } from "@/components/mailbox-selector";
@@ -33,7 +32,7 @@ function DriveFrame({ children }: { children: React.ReactNode }) {
 				<header className="flex h-16 w-full shrink-0 items-center gap-3 pr-4 text-sm">
 					<MobileMenuButton className="ml-2" />
 					<div id="drive-header-slot" className="flex min-w-0 flex-1 items-center" />
-					<LicenseIndicator />
+
 					<MailboxSelector />
 				</header>
 				<main id="main-content" tabIndex={-1} className="focus:outline-none min-h-0 min-w-0 flex-1 overflow-hidden md:pr-4">{children}</main>

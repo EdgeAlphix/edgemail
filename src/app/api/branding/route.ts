@@ -37,7 +37,6 @@ export async function PUT(request: Request) {
 		return NextResponse.json(await updateBranding(env, { appName, icon }));
 	} catch (error) {
 		const message = error instanceof Error ? error.message : "Unable to update branding";
-		const status = /license is required/i.test(message) ? 403 : 500;
-		return NextResponse.json({ error: message }, { status });
+		return NextResponse.json({ error: message }, { status: 500 });
 	}
 }

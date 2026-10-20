@@ -15,6 +15,6 @@ export const adminPageTitles: Record<string, TranslationKey> = {
 	"/activity": "admin.nav.activity",
 	"/backups": "admin.nav.backups",
 	"/branding": "admin.nav.branding",
-	"/licenses": "admin.nav.licenses",
+
 	"/ai-usage": "admin.page.aiUsage",
 };

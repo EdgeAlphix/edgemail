@@ -8,7 +8,7 @@ import { parseBookingEventInput } from "@/lib/booking/utils";
 import { getEnv } from "@/lib/cloudflare";
 import type { BookingEventRouteContext } from "./types";
 import { validBookingHostIds } from "@/lib/booking/hosts";
-import { getLicenseEntitlements } from "@/lib/licenses/service";
+import { getFeatureEntitlements } from "@/lib/features/service";
 
 export async function PATCH(request: Request, { params }: BookingEventRouteContext) {
 	const env = getEnv();
@@ -19,7 +19,7 @@ export async function PATCH(request: Request, { params }: BookingEventRouteConte
 	if (!input) return NextResponse.json({ error: "Enter valid booking details and availability." }, { status: 400 });
 	const { eventId } = await params;
 	const db = getDb(env);
-	const canManageHosts = user.role === "admin" && (await getLicenseEntitlements(env)).canShareMailboxes;
+	const canManageHosts = user.role === "admin" && (await getFeatureEntitlements(env)).canShareMailboxes;
 	const hostIds = await validBookingHostIds(db, user.id, input.hostIds, canManageHosts);
 	if (!hostIds) return NextResponse.json({ error: "Choose users from the host list." }, { status: 400 });
 	const [taken] = await db.select({ id: bookingEvents.id }).from(bookingEvents).where(and(eq(bookingEvents.userId, user.id), eq(bookingEvents.slug, input.slug))).limit(1);

@@ -2,8 +2,8 @@ import type { MetadataRoute } from "next";
 
 export default function manifest(): MetadataRoute.Manifest {
 	return {
-		name: "Mailflare",
-		short_name: "Mailflare",
+		name: "EdgeMail",
+		short_name: "EdgeMail",
 		description: "Email, anywhere.",
 		start_url: "/inbox",
 		display: "standalone",

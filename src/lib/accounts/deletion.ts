@@ -6,7 +6,6 @@ import type { SessionUser } from "@/lib/auth/types";
 import { deleteDriveItems } from "@/lib/drive/access";
 import { driveObjectKey } from "@/lib/drive/utils";
 import { newId } from "@/lib/ids";
-import { getAccountSeatError } from "@/lib/licenses/seats";
 import { removeMailboxDomainRouting } from "@/lib/mailboxes/domain-addresses";
 import { avatarKeyFor } from "@/app/api/profile/avatar/utils";
 import { getAccountPurgeCutoff } from "./deletion-utils";
@@ -85,8 +84,6 @@ export async function restoreAccount(env: CloudflareEnv, actor: SessionUser, id:
 	if (!target) return { ok: false, status: 404, error: "Account not found" };
 	if (!target.deletedAt) return { ok: false, status: 409, error: "Account is not deleted" };
 	if (!isPrimaryAdmin(actor) && target.role === "admin") return { ok: false, status: 403, error: "Only the primary admin can manage admin accounts" };
-	const seatError = await getAccountSeatError(env);
-	if (seatError) return { ok: false, status: 403, error: seatError };
 	await db.update(users).set({ deletedAt: null, disabled: false }).where(eq(users.id, id));
 	return { ok: true, deleted: 0 };
 }

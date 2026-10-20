@@ -5,7 +5,7 @@ import { getDb } from "@/db";
 import { domains, mailboxAliases, mailboxes, users } from "@/db/schema";
 import { requireUser } from "@/lib/auth/cookies";
 import { newId } from "@/lib/ids";
-import { getLicenseEntitlements } from "@/lib/licenses/service";
+import { getFeatureEntitlements } from "@/lib/features/service";
 import { tracksAccountIdentity } from "@/lib/profile/identity-utils";
 import { mailboxSchema } from "@/lib/validators";
 import { ensureMailboxDomainRouting, getMailboxDomainAddresses } from "@/lib/mailboxes/domain-addresses";
@@ -16,7 +16,7 @@ export async function GET(request: Request) {
 	const user = await requireUser(env, request);
 	const db = getDb(env);
 	const rows = await ensurePersonalMailbox(env, db, user);
-	const entitlements = await getLicenseEntitlements(env);
+	const entitlements = await getFeatureEntitlements(env);
 	return NextResponse.json({
 		mailboxes: await Promise.all(rows.map(async (mailbox) => ({
 			...mailbox,
@@ -40,7 +40,7 @@ export async function POST(request: Request) {
 	const db = getDb(env);
 	const mailboxType = parsed.data.type ?? "personal";
 	if (mailboxType === "shared") {
-		const entitlements = await getLicenseEntitlements(env);
+		const entitlements = await getFeatureEntitlements(env);
 		if (user.role !== "admin" || !entitlements.canShareMailboxes) {
 			return NextResponse.json({ error: "A Team license is required to create shared inboxes" }, { status: 403 });
 		}
