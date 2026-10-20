@@ -41,6 +41,8 @@ export async function getSesIdentity(config: AwsConfig, hostname: string): Promi
 }
 
 export async function createSesIdentity(config: AwsConfig, hostname: string): Promise<SesIdentityStatus> {
+	const existing = await getSesIdentity(config, hostname);
+	if (existing.registered) return existing;
 	try {
 		const identity = await awsJson<SesIdentity>({ ...sesV2(config, "/v2/email/identities"), method: "POST", json: { EmailIdentity: hostname, DkimSigningAttributes: { NextSigningKeyLength: "RSA_2048_BIT" } } });
 		return toIdentityStatus(hostname, identity);

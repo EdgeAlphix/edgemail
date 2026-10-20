@@ -135,6 +135,25 @@ function mockAws(handler) {
 
 const creds = { accessKeyId: "AKIAEXAMPLE000000000", secretAccessKey: "x".repeat(40), region: "us-east-1" };
 
+test("existing SES identities need only read permission during setup", async () => {
+	const mock = mockAws(() => ({ body: JSON.stringify({ VerifiedForSendingStatus: true, DkimAttributes: { Status: "SUCCESS", Tokens: ["token"] } }) }));
+	try {
+		const identity = await sesLib.createSesIdentity(creds, "example.com");
+		assert.equal(identity.verified, true);
+		assert.deepEqual(mock.calls.map(({ method }) => method), ["GET"]);
+	} finally { mock.restore(); }
+});
+
+test("missing SES identities are still created", async () => {
+	const mock = mockAws(({ url }) => url.pathname.endsWith("/example.com")
+		? { status: 404, body: JSON.stringify({ __type: "NotFoundException" }) }
+		: { body: JSON.stringify({ DkimAttributes: { Status: "PENDING", Tokens: ["token"] } }) });
+	try {
+		assert.equal((await sesLib.createSesIdentity(creds, "example.com")).registered, true);
+		assert.deepEqual(mock.calls.map(({ method }) => method), ["GET", "POST"]);
+	} finally { mock.restore(); }
+});
+
 test("validation rejects credentials AWS refuses", async () => {
 	const mock = mockAws(() => ({ status: 403, body: "<ErrorResponse><Error><Code>InvalidClientTokenId</Code><Message>bad token</Message></Error></ErrorResponse>" }));
 	try {
