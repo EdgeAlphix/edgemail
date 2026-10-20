@@ -33,6 +33,7 @@ jobs:
           git fetch --no-tags upstream main
           git merge --no-edit upstream/main
       - run: npm ci --no-audit --no-fund
+      - run: npm run db:bundle
       - run: node --test --test-concurrency=2 tests/*.test.mjs
       - run: npm run build
       - name: Publish verified update

@@ -18,6 +18,7 @@ Locally:
 git fetch upstream main
 git merge upstream/main
 npm ci
+npm run db:bundle
 node --test --test-concurrency=2 tests/*.test.mjs
 npm run build
 git push origin main
