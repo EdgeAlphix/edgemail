@@ -2099,5 +2099,7 @@
 	"accounts.deleteFailed": "Unable to delete accounts",
 	"accounts.restore": "Restore",
 	"accounts.restoreAccount": "Restore {name}",
-	"accounts.restoreFailed": "Unable to restore account"
+	"accounts.restoreFailed": "Unable to restore account",
+	"account.searchInboxes": "Search inboxes",
+	"account.noMatchingInboxes": "No inboxes match your search."
 }

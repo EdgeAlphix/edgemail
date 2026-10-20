@@ -23,6 +23,7 @@ import type { ProfileAvatarChangedDetail, ProfileNameChangedDetail } from "@/lib
 import { MAILBOX_AVATAR_CHANGED_EVENT } from "@/lib/mailboxes/avatar-client";
 import type { MailboxAvatarChangedDetail } from "@/lib/mailboxes/avatar-client-types";
 import { Skeleton } from "@/components/ui/skeleton";
+import { Input } from "@/components/ui/input";
 import { Tooltip } from "@/components/ui/tooltip";
 import type {
 	AccountAvatarProps,
@@ -34,6 +35,7 @@ import {
 	getAccountInitial,
 	getMailboxAddress,
 	getMailboxName,
+	matchesMailboxSearch,
 	isAdminPath,
 } from "./mailbox-selector-utils";
 
@@ -127,6 +129,7 @@ export function MailboxSelector({ initialUser }: MailboxSelectorProps = {}) {
 	const [avatarUrl, setAvatarUrl] = useState("/api/profile/avatar");
 	const [mailboxAvatarUrls, setMailboxAvatarUrls] = useState<Record<string, string>>({});
 	const [inboxesOpen, setInboxesOpen] = useState(false);
+	const [inboxQuery, setInboxQuery] = useState("");
 	const [browserAccounts, setBrowserAccounts] = useState<BrowserAccount[]>([]);
 
 	useEffect(() => {
@@ -220,6 +223,7 @@ export function MailboxSelector({ initialUser }: MailboxSelectorProps = {}) {
 		? selectedMailboxAvatarUrl ?? `/api/mailboxes/${selectedMailbox.id}/avatar`
 		: avatarUrl;
 	const otherMailboxes = mailboxes.filter((mailbox) => mailbox.id !== selectedMailbox?.id);
+	const filteredMailboxes = otherMailboxes.filter((mailbox) => matchesMailboxSearch(mailbox, inboxQuery));
 	const adminActive = isAdminPath(pathname);
 
 	async function logout() {
@@ -244,7 +248,7 @@ export function MailboxSelector({ initialUser }: MailboxSelectorProps = {}) {
 		<div ref={ref} className="relative">
 			<button
 				type="button"
-				onClick={() => setOpen((value) => !value)}
+				onClick={() => { setInboxQuery(""); setOpen((value) => !value); }}
 				className="rounded-full p-1 transition-colors hover:bg-neutral-200"
 				aria-label={t("account.openMenu")}
 				aria-expanded={open}
@@ -334,7 +338,9 @@ export function MailboxSelector({ initialUser }: MailboxSelectorProps = {}) {
 									{t("account.inboxes", { count: otherMailboxes.length })}
 									<ChevronDown size={16} className={`transition-transform ${inboxesOpen ? "rotate-180" : ""}`} />
 								</button>
-								{inboxesOpen && otherMailboxes.map((mailbox) => {
+								{inboxesOpen && <Input type="search" aria-label={t("account.searchInboxes")} placeholder={t("account.searchInboxes")} value={inboxQuery} onChange={(event) => setInboxQuery(event.target.value)} className="my-2 bg-white" />}
+								{inboxesOpen && filteredMailboxes.length === 0 && <p role="status" className="px-4 py-3 text-sm text-neutral-500">{t("account.noMatchingInboxes")}</p>}
+								{inboxesOpen && filteredMailboxes.map((mailbox) => {
 									const mailboxCount = counts.mailboxes.find((count) => count.mailboxId === mailbox.id);
 									return (
 										<MailboxAccountRow

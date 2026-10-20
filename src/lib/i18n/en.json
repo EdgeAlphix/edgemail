@@ -2039,5 +2039,7 @@
 	"drive.save": "Save",
 	"compose.cancelSend": "Cancel",
 	"compose.sendCancelled": "Sending cancelled. Message moved to Drafts.",
-	"compose.cancelTooLate": "Too late to cancel: the message is already being sent."
+	"compose.cancelTooLate": "Too late to cancel: the message is already being sent.",
+	"account.searchInboxes": "Search inboxes",
+	"account.noMatchingInboxes": "No inboxes match your search."
 }

@@ -8,6 +8,11 @@ export function getMailboxName(mailbox: MailboxOption): string {
 	return mailbox.displayName ?? mailbox.localPart;
 }
 
+export function matchesMailboxSearch(mailbox: MailboxOption, query: string): boolean {
+	return `${getMailboxName(mailbox)} ${getMailboxAddress(mailbox)}`
+		.toLowerCase().includes(query.trim().toLowerCase());
+}
+
 export function getAccountInitial(value: string): string {
 	return value.trim().slice(0, 1).toUpperCase() || "M";
 }

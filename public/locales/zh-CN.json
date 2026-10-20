@@ -2039,5 +2039,7 @@
 	"agent.tool.listedCount.one": "Listed {count} email",
 	"agent.tool.threadCount.one": "Read {count} email in thread",
 	"agent.tool.movedCount.one": "Moved {count} email",
-	"agent.tool.preparedCount.one": "Prepared {count} email for review"
+	"agent.tool.preparedCount.one": "Prepared {count} email for review",
+	"account.searchInboxes": "Search inboxes",
+	"account.noMatchingInboxes": "No inboxes match your search."
 }

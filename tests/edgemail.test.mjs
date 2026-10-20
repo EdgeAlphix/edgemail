@@ -21,6 +21,15 @@ async function bundle(entry, name) {
 }
 const features = await bundle("src/lib/features/service.ts", "features.mjs");
 const access = await bundle("src/lib/mailboxes/access.ts", "access.mjs");
+const selector = await bundle("src/components/mailbox-selector-utils.ts", "selector.mjs");
+
+test("inbox search matches names and addresses without case or surrounding whitespace", () => {
+    const inbox = { localPart: "contact", hostname: "kernel.ngo", displayName: "Kernel Support" };
+    for (const query of ["", "  ", "CONTACT", " kernel.ngo ", "Support", "contact@kernel.ngo"]) {
+        assert.equal(selector.matchesMailboxSearch(inbox, query), true, query);
+    }
+    assert.equal(selector.matchesMailboxSearch(inbox, "sterlingwick.com"), false);
+});
 
 test("all Team features and unlimited accounts require no license or external request", async () => {
     const previous = globalThis.fetch;
